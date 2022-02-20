@@ -1,0 +1,10 @@
+server:
+  port: 9000
+
+logging:
+  level:
+    root: info
+    io.starrychoon: debug
+    org.springframework.web: debug
+    org.springframework.security: trace
+    org.springframework.security.oauth2: trace

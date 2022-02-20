@@ -1,0 +1,17 @@
+server:
+  port: 8090
+
+logging:
+  level:
+    root: info
+    io.starrychoon: debug
+    org.springframework.web: debug
+    org.springframework.security: trace
+    org.springframework.security.oauth2: trace
+
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://auth-server:9000
