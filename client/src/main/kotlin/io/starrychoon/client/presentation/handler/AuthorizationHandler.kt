@@ -16,8 +16,8 @@
 
 package io.starrychoon.client.presentation.handler
 
+import io.starrychoon.client.infrastructure.properties.*
 import kotlinx.coroutines.reactor.*
-import org.springframework.beans.factory.annotation.*
 import org.springframework.security.authentication.*
 import org.springframework.security.core.*
 import org.springframework.security.core.authority.*
@@ -41,8 +41,7 @@ import reactor.kotlin.core.util.function.*
  */
 @Component
 class AuthorizationHandler(
-    @Value("\${messages.base-uri}")
-    private val messagesBaseUri: String,
+    private val messageServerProperties: MessageServerProperties,
     private val webClient: WebClient,
     private val authorizedClientManager: ReactiveOAuth2AuthorizedClientManager,
 ) {
@@ -63,7 +62,7 @@ class AuthorizationHandler(
         val authorizedClient = authorizedClient(request, "messaging-client-authorization-code").awaitSingle()
         val messages = webClient
             .get()
-            .uri(messagesBaseUri)
+            .uri(messageServerProperties.baseUri)
             .attributes(oauth2AuthorizedClient(authorizedClient))
             .retrieve()
             .bodyToMono<List<String>>()
@@ -76,7 +75,7 @@ class AuthorizationHandler(
     suspend fun clientCredentialsGrant(request: ServerRequest): ServerResponse {
         val messages = webClient
             .get()
-            .uri(messagesBaseUri)
+            .uri(messageServerProperties.baseUri)
             .attributes(clientRegistrationId("messaging-client-client-credentials"))
             .retrieve()
             .bodyToMono<List<String>>()

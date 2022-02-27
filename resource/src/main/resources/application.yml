@@ -1,5 +1,16 @@
 server:
   port: 8090
+  shutdown: gradeful
+
+spring:
+  application:
+    name: resource-server
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://auth-server:9000/oauth2/jwks
+          jws-algorithm: RS256
 
 logging:
   level:
@@ -8,10 +19,3 @@ logging:
     org.springframework.web: debug
     org.springframework.security: trace
     org.springframework.security.oauth2: trace
-
-spring:
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: http://auth-server:9000

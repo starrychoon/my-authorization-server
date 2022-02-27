@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm")
+    kotlin("kapt")
     kotlin("plugin.spring")
     kotlin("plugin.jpa")
 
@@ -20,6 +21,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.security:spring-security-oauth2-client")
     implementation("org.springframework.security:spring-security-oauth2-jose")
+    kapt("org.springframework.boot:spring-boot-configuration-processor")
 
     // apple silicon issue https://github.com/netty/netty/issues/11020
     implementation(group = "io.netty", name = "netty-resolver-dns-native-macos", classifier = "osx-aarch_64")

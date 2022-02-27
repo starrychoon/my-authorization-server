@@ -1,15 +1,10 @@
 server:
   port: 8080
-
-logging:
-  level:
-    root: info
-    io.starrychoon: debug
-    org.springframework.web: debug
-    org.springframework.security: trace
-    org.springframework.security.oauth2: trace
+  shutdown: graceful
 
 spring:
+  application:
+    name: client
   thymeleaf:
     cache: false
   security:
@@ -41,7 +36,20 @@ spring:
             client-name: messaging-client-client-credentials
         provider:
           spring:
-            issuer-uri: http://auth-server:9000
+            authorization-uri: http://auth-server:9000/oauth2/authorize
+            token-uri: http://auth-server:9000/oauth2/token
+            user-info-uri: http://auth-server:9000/userinfo
+            user-info-authentication-method: HEADER
+            user-name-attribute: sub
+            jwk-set-uri: http://auth-server:9000/oauth2/jwks
 
 messages:
   base-uri: http://127.0.0.1:8090/messages
+
+logging:
+  level:
+    root: info
+    io.starrychoon: debug
+    org.springframework.web: debug
+    org.springframework.security: trace
+    org.springframework.security.oauth2: trace
