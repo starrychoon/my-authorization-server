@@ -97,9 +97,8 @@ class AuthorizationServerConfig {
     }
 
     @Bean
-    fun jwkSource(): JWKSource<SecurityContext> {
-        val rsaKey: RSAKey = Jwks.generateRsa()
-        val jwkSet = JWKSet(rsaKey)
+    fun jwkSource(rsaKeyProvider: RSAKeyProvider): JWKSource<SecurityContext> {
+        val jwkSet = JWKSet(rsaKeyProvider.loadRsaKeySet())
         return JWKSource { jwkSelector, securityContext -> jwkSelector.select(jwkSet) }
     }
 }
