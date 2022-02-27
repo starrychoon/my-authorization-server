@@ -50,9 +50,11 @@ class AuthorizationHandler(
         val errorCode = request.queryParamOrNull(OAuth2ParameterNames.ERROR)
         val model = mutableMapOf<String, Any>()
         if (!errorCode.isNullOrBlank()) {
-            model["error"] = OAuth2Error(errorCode,
+            model["error"] = OAuth2Error(
+                errorCode,
                 request.queryParamOrNull(OAuth2ParameterNames.ERROR_DESCRIPTION),
-                request.queryParamOrNull(OAuth2ParameterNames.ERROR_URI))
+                request.queryParamOrNull(OAuth2ParameterNames.ERROR_URI),
+            )
         }
 
         return ok().renderAndAwait("index", model)
@@ -95,7 +97,11 @@ class AuthorizationHandler(
             .defaultIfEmpty(ANONYMOUS_USER_TOKEN)
         val defaultRegistrationId = Mono.justOrEmpty(registrationId)
             .switchIfEmpty { clientRegistrationId(defaultAuthentication) }
-            .switchIfEmpty { Mono.error { IllegalArgumentException("The clientRegistrationId could not be resolved. Please provide one") } }
+            .switchIfEmpty {
+                Mono.error {
+                    IllegalArgumentException("The clientRegistrationId could not be resolved. Please provide one")
+                }
+            }
 
         return Mono.zip(defaultRegistrationId, defaultAuthentication)
             .map { (defaultRegistrationId, defaultAuthentication) ->

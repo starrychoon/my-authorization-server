@@ -19,7 +19,11 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-security")
-    implementation("org.springframework.security:spring-security-oauth2-authorization-server:$spring_authorization_server_version")
+    implementation(
+        group = "org.springframework.security",
+        name = "spring-security-oauth2-authorization-server",
+        version = spring_authorization_server_version,
+    )
     kapt("org.springframework.boot:spring-boot-configuration-processor")
 
     implementation("org.bouncycastle:bcpkix-jdk15on:$bouncy_castle_version")
