@@ -14,16 +14,20 @@
  * limitations under the License.
  */
 
-package io.starrychoon.authorizationserver.infrastructure.jose
+package io.starrychoon.authorizationserver.infrastructure.authorization
 
 import org.springframework.boot.context.properties.*
 
 /**
  * @author starrychoon
+ *
+ * @property issuer The URL the Provider uses as its Issuer Identifier.
+ * @property rsa The RSA keys for JWK set
  */
-@ConfigurationProperties(prefix = "provider.settings.keys")
+@ConfigurationProperties(prefix = "provider.settings")
 @ConstructorBinding
-class RSAKeyProperties(
+class ProviderSettingsProperties(
+    val issuer: String?,
     val rsa: List<RSAKey>,
 ) {
 

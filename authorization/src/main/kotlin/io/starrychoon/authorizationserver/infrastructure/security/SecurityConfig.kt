@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.starrychoon.authorizationserver.infrastructure.config
+package io.starrychoon.authorizationserver.infrastructure.security
 
 import org.springframework.context.annotation.*
 import org.springframework.security.config.annotation.web.builders.*
@@ -28,7 +28,7 @@ import org.springframework.security.web.*
  * @author starrychoon
  */
 @EnableWebSecurity
-class DefaultSecurityConfig {
+class SecurityConfig {
 
     @Bean
     fun defaultSecurityFilterChain(http: HttpSecurity): SecurityFilterChain? {

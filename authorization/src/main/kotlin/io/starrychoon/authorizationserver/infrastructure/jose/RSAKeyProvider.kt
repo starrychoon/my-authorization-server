@@ -17,6 +17,7 @@
 package io.starrychoon.authorizationserver.infrastructure.jose
 
 import com.nimbusds.jose.jwk.*
+import io.starrychoon.authorizationserver.infrastructure.authorization.*
 import mu.*
 import org.springframework.core.io.*
 import org.springframework.stereotype.*
@@ -26,16 +27,16 @@ import org.springframework.stereotype.*
  */
 @Component
 class RSAKeyProvider(
-    private val rsaKeyProperties: RSAKeyProperties,
+    private val providerSettingsProperties: ProviderSettingsProperties,
     private val resourceLoader: ResourceLoader,
 ) {
     private val logger = KotlinLogging.logger { }
 
     fun loadRsaKeySet(): List<RSAKey> {
-        return rsaKeyProperties.rsa.mapNotNull(::loadRsaKey)
+        return providerSettingsProperties.rsa.mapNotNull(::loadRsaKey)
     }
 
-    private fun loadRsaKey(rsa: RSAKeyProperties.RSAKey): RSAKey? {
+    private fun loadRsaKey(rsa: ProviderSettingsProperties.RSAKey): RSAKey? {
         try {
             val publicKey = resourceLoader.getResource(rsa.publicKey)
             val privateKey = resourceLoader.getResource(rsa.privateKey)

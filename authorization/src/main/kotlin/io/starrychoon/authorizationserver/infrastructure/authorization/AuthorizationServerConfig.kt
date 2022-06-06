@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.starrychoon.authorizationserver.infrastructure.config
+package io.starrychoon.authorizationserver.infrastructure.authorization
 
 import com.nimbusds.jose.jwk.*
 import com.nimbusds.jose.jwk.source.*
@@ -38,7 +38,9 @@ import java.util.*
  * @author starrychoon
  */
 @Configuration(proxyBeanMethods = false)
-class AuthorizationServerConfig {
+class AuthorizationServerConfig(
+    private val providerSettingsProperties: ProviderSettingsProperties,
+) {
 
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -93,12 +95,14 @@ class AuthorizationServerConfig {
 
     @Bean
     fun providerSettings(): ProviderSettings {
-        return ProviderSettings.builder().issuer("http://auth-server:9000").build()
+        val builder = ProviderSettings.builder()
+        providerSettingsProperties.issuer?.let(builder::issuer)
+        return builder.build()
     }
 
     @Bean
     fun jwkSource(rsaKeyProvider: RSAKeyProvider): JWKSource<SecurityContext> {
         val jwkSet = JWKSet(rsaKeyProvider.loadRsaKeySet())
-        return JWKSource { jwkSelector, securityContext -> jwkSelector.select(jwkSet) }
+        return ImmutableJWKSet(jwkSet)
     }
 }
