@@ -16,8 +16,8 @@ logging:
 
 provider:
   settings:
-    keys:
-      rsa:
-        - public-key: classpath:jose/mykey.pub
-          private-key: classpath:jose/mykey.pem
-          key-id: mykey
+    issuer: http://auth-server:9000
+    rsa:
+      - public-key: classpath:jose/mykey.pub
+        private-key: classpath:jose/mykey.pem
+        key-id: mykey
