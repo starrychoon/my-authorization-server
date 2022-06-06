@@ -17,7 +17,6 @@ logging:
 provider:
   settings:
     issuer: http://auth-server:9000
-    rsa:
-      - public-key: classpath:jose/mykey.pub
-        private-key: classpath:jose/mykey.pem
+    jwk-set:
+      - private-key-path: classpath:jose/mykey.pem
         key-id: mykey

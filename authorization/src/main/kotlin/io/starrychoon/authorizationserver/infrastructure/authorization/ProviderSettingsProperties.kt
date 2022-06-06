@@ -22,23 +22,23 @@ import org.springframework.boot.context.properties.*
  * @author starrychoon
  *
  * @property issuer The URL the Provider uses as its Issuer Identifier.
- * @property rsa The RSA keys for JWK set
+ * @property jwkSet The JWK set
  */
 @ConfigurationProperties(prefix = "provider.settings")
 @ConstructorBinding
 class ProviderSettingsProperties(
     val issuer: String?,
-    val rsa: List<RSAKey>,
+    val jwkSet: List<JWKInfo>,
 ) {
 
     /**
-     * @property publicKey public key location(classpath)
-     * @property privateKey private key location(classpath)
+     * @property publicKeyPath The resource location of PEM-encoded public key. It can be `null` if [privateKeyPath] is RSA private key.
+     * @property privateKeyPath The resource location of PEM-encoded private key.
      * @property keyId key ID of JWK
      */
-    class RSAKey(
-        val publicKey: String,
-        val privateKey: String,
+    class JWKInfo(
+        val publicKeyPath: String?,
+        val privateKeyPath: String,
         val keyId: String?,
     )
 }

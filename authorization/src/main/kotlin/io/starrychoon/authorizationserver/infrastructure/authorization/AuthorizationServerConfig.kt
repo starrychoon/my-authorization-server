@@ -19,10 +19,12 @@ package io.starrychoon.authorizationserver.infrastructure.authorization
 import com.nimbusds.jose.jwk.*
 import com.nimbusds.jose.jwk.source.*
 import com.nimbusds.jose.proc.*
-import io.starrychoon.authorizationserver.infrastructure.jose.*
+import io.starrychoon.authorizationserver.infrastructure.nimbusds.*
+import mu.*
 import org.springframework.context.annotation.*
 import org.springframework.core.*
 import org.springframework.core.annotation.*
+import org.springframework.core.io.*
 import org.springframework.security.config.annotation.web.builders.*
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.authorization.*
 import org.springframework.security.config.web.servlet.*
@@ -40,7 +42,9 @@ import java.util.*
 @Configuration(proxyBeanMethods = false)
 class AuthorizationServerConfig(
     private val providerSettingsProperties: ProviderSettingsProperties,
+    private val resourceLoader: ResourceLoader,
 ) {
+    private val logger = KotlinLogging.logger { }
 
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -101,8 +105,29 @@ class AuthorizationServerConfig(
     }
 
     @Bean
-    fun jwkSource(rsaKeyProvider: RSAKeyProvider): JWKSource<SecurityContext> {
-        val jwkSet = JWKSet(rsaKeyProvider.loadRsaKeySet())
+    fun jwkSource(): JWKSource<SecurityContext> {
+        val keys = providerSettingsProperties.jwkSet.mapNotNull { getJWKFromResource(it) }
+        val jwkSet = JWKSet(keys)
         return ImmutableJWKSet(jwkSet)
+    }
+
+    private fun getJWKFromResource(jwkInfo: ProviderSettingsProperties.JWKInfo): JWK? {
+        try {
+            val privateKeyResource = resourceLoader.getResource(jwkInfo.privateKeyPath)
+            var pemEncodedObjects: String = privateKeyResource.inputStream.reader().use { it.readText() }
+            if (jwkInfo.publicKeyPath != null) {
+                val publicKeyResource = resourceLoader.getResource(jwkInfo.publicKeyPath)
+                pemEncodedObjects += publicKeyResource.inputStream.reader().use { it.readText() }
+            }
+
+            val jwk = JWK.parseFromPEMEncodedObjects(pemEncodedObjects)
+            return jwk.builder()
+                .keyUse(KeyUse.SIGNATURE)
+                .keyID(jwkInfo.keyId)
+                .build()
+        } catch (e: Exception) {
+            logger.warn(e) { "failed to load JWK with key id '${jwkInfo.keyId}'" }
+            return null
+        }
     }
 }
